@@ -1,17 +1,9 @@
-def orderMoves(validLocations, board, piece, maximising, depth, scoreFunction):
-    def moveScore(col):
-        row = dropPiece(board, col, piece)
-        score = scoreFunction(board, piece)
-        board[row][col] = 0
-        return score
-    return sorted(validLocations, key=moveScore, reverse=maximising)
-
 # Wrapper to just get move
-def minimax(board, depth, alpha, beta, maximisingPlayer, enemyPiece, scoreFunction, pruning):
-    col, _ = _minimax(board, depth, alpha, beta, maximisingPlayer, enemyPiece, scoreFunction, pruning)
+def minimax(board, depth,maximisingPlayer, enemyPiece, scoreFunction):
+    col, _ = _minimax(board, depth, maximisingPlayer, enemyPiece, scoreFunction)
     return col
 
-def _minimax(board, depth, alpha, beta, maximisingPlayer, enemyPiece, scoreFunction, pruning):
+def _minimax(board, depth, maximisingPlayer, enemyPiece, scoreFunction):
 
     validLocations = getValidLocations(board)
     playerPiece = 1 if enemyPiece == 2 else 2
@@ -25,37 +17,27 @@ def _minimax(board, depth, alpha, beta, maximisingPlayer, enemyPiece, scoreFunct
     elif game.checkWin(board, playerPiece):
         return (None, float('-inf'))
 
-    ordered = orderMoves(validLocations, board, enemyPiece, maximisingPlayer, depth, scoreFunction)
     if maximisingPlayer:
         value = float('-inf')
-        column = random.choice(ordered)
+        column = random.choice(validLocations)
         for col in ordered:
             row = dropPiece(board, col, enemyPiece)
-            newScore = _minimax(board, depth-1, alpha, beta, False, enemyPiece, scoreFunction, pruning)[1]
+            newScore = _minimax(board, depth-1, False, enemyPiece, scoreFunction)[1]
             board[row][col] = 0
             if newScore > value:
                 value = newScore
                 column = col
-            if pruning:
-                alpha = max(alpha, value)
-                if alpha >= beta:
-                    return column, value
-        result = (column, value, '') if pruning else (column, value)
+
         return column, value
 
     else:
         value = float('inf')
-        column = random.choice(ordered)
+        column = random.choice(validLocations)
         for col in ordered:
             row = dropPiece(board, col, playerPiece)
-            newScore = _minimax(board, depth-1, alpha, beta, True, enemyPiece, scoreFunction, pruning)[1]
+            newScore = _minimax(board, depth-1, True, enemyPiece, scoreFunction)[1]
             board[row][col] = 0
             if newScore < value:
                 value = newScore
                 column = col
-            if pruning:
-                beta = min(beta, value)
-                if alpha >= beta:
-                    return column, value
-        result = (column, value, '') if pruning else (column, value)
         return column, value
