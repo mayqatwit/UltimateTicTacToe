@@ -20,7 +20,7 @@ def _minimax(board, depth, maximisingPlayer, enemyPiece, scoreFunction):
     if maximisingPlayer:
         value = float('-inf')
         column = random.choice(validLocations)
-        for col in ordered:
+        for col in validLocations:
             row = dropPiece(board, col, enemyPiece)
             newScore = _minimax(board, depth-1, False, enemyPiece, scoreFunction)[1]
             board[row][col] = 0
@@ -33,7 +33,7 @@ def _minimax(board, depth, maximisingPlayer, enemyPiece, scoreFunction):
     else:
         value = float('inf')
         column = random.choice(validLocations)
-        for col in ordered:
+        for col in validLocations:
             row = dropPiece(board, col, playerPiece)
             newScore = _minimax(board, depth-1, True, enemyPiece, scoreFunction)[1]
             board[row][col] = 0
