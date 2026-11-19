@@ -112,6 +112,37 @@ class UltimateTicTacToe:
     def undoMove(self, previous):
         self.state = previous
 
+    #heuristics
+    def h1(self):
+        if self.result == DRAW:
+            return 0
+        elif self.result == X_WIN:
+            return 10
+        elif self.result == O_WIN:
+            return -10
+        
+        tally = 0
+        for i in range(9):
+            boardX = self.pieces(i, 0)
+            boardO = self.pieces(i, 1)
+
+            xCenter = boardX & 0b000010000
+            xCorner = boardX & 0b101000101
+            xEdge = boardX & 0b010101010
+
+            oCenter = boardO & 0b000010000
+            oCorner = boardO & 0b101000101
+            oEdge = boardO & 0b010101010
+            
+            xSum = 4 * xCenter.bit_count() + 3 * xCorner.bit_count() + 2 * xEdge.bit_count()
+            oSum = 4 * oCenter.bit_count() + 3 * oCorner.bit_count() + 2 * oEdge.bit_count()
+
+            if oSum > xSum:
+                tally -= 1
+            elif oSum < xSum:
+                tally += 1
+        return tally
+
     def __str__(self):
         rows = []
         for bigRow in range(3):
@@ -127,4 +158,4 @@ class UltimateTicTacToe:
                 rows.append(" | ".join(parts))
             if bigRow < 2:
                 rows.append("------+-------+------")
-        return "\n".join(rows) + "\n"
+        return "\n".join(rows) + "\n" #+ str(self.h1()) + "\n"
