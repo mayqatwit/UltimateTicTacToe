@@ -1,5 +1,4 @@
 import random
-# https://codereview.stackexchange.com/questions/262956/representing-tic-tac-toe-using-a-binary-bitboard 
 OPEN, X_WIN, O_WIN, DRAW = 0b00, 0b01, 0b10, 0b11 # board is open, X wins, O wins, or draw
 X, O = 0b0, 0b1 # player ids
 ANY_BOARD = 9 # required board bit representation if player can play anywhere
@@ -117,9 +116,9 @@ class UltimateTicTacToe:
         if self.result == DRAW:
             return 0
         elif self.result == X_WIN:
-            return 10
+            return float('inf')
         elif self.result == O_WIN:
-            return -10
+            return float('-inf')
         
         tally = 0
         for i in range(9):
@@ -137,10 +136,7 @@ class UltimateTicTacToe:
             xSum = 4 * xCenter.bit_count() + 3 * xCorner.bit_count() + 2 * xEdge.bit_count()
             oSum = 4 * oCenter.bit_count() + 3 * oCorner.bit_count() + 2 * oEdge.bit_count()
 
-            if oSum > xSum:
-                tally -= 1
-            elif oSum < xSum:
-                tally += 1
+            tally += xSum - oSum
         return tally
 
     def __str__(self):
@@ -158,4 +154,4 @@ class UltimateTicTacToe:
                 rows.append(" | ".join(parts))
             if bigRow < 2:
                 rows.append("------+-------+------")
-        return "\n".join(rows) + "\n" #+ str(self.h1()) + "\n"
+        return "\n".join(rows) + "\n"
