@@ -49,6 +49,10 @@ class UltimateTicTacToe:
         value = self._get(REQUIRED_BOARD_SHIFT, 4)
         return None if value == ANY_BOARD else value
 
+    @property
+    def gameWinner(self):
+        return "X" if self.result == X_WIN else ("Y" if self.result == Y_WIN else "DRAW")
+
     def pieces(self, board, player):
         # the given players pieces on the given board
         return self._get(9 * (2 * board + player), 9)
