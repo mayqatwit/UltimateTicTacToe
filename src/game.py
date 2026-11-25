@@ -51,7 +51,7 @@ class UltimateTicTacToe:
 
     @property
     def gameWinner(self):
-        return "X" if self.result == X_WIN else ("Y" if self.result == Y_WIN else "DRAW")
+        return "X" if self.result == X_WIN else ("O" if self.result == O_WIN else "DRAW")
 
     def pieces(self, board, player):
         # the given players pieces on the given board
@@ -141,6 +141,39 @@ class UltimateTicTacToe:
             oSum = 4 * oCenter.bit_count() + 3 * oCorner.bit_count() + 2 * oEdge.bit_count()
 
             tally += xSum - oSum
+        return tally
+
+    #basically the same as h1, but the weighting is also applied to the outer board
+    def h2(self):
+        if self.result == DRAW:
+            return 0
+        elif self.result == X_WIN:
+            return float('inf')
+        elif self.result == O_WIN:
+            return float('-inf')
+            
+        tally = 0
+        for i in range(9):
+            boardX = self.pieces(i, 0)
+            boardO = self.pieces(i, 1)
+        
+            xCenter = boardX & 0b000010000
+            xCorner = boardX & 0b101000101
+            xEdge = boardX & 0b010101010
+    
+            oCenter = boardO & 0b000010000
+            oCorner = boardO & 0b101000101
+            oEdge = boardO & 0b010101010
+                
+            xSum = 4 * xCenter.bit_count() + 3 * xCorner.bit_count() + 2 * xEdge.bit_count()
+            oSum = 4 * oCenter.bit_count() + 3 * oCorner.bit_count() + 2 * oEdge.bit_count()
+
+            if i == 4:
+                tally += 4 * (xSum - oSum)
+            elif i in [0,2,6,8]:
+                tally += 3 * (xSum - oSum)
+            else:
+                tally += 2 * (xSum - oSum)
         return tally
 
     def __str__(self):
